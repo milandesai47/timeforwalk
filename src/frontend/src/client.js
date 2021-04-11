@@ -19,12 +19,25 @@ const checkCity = response => {
   error.response = response;
   return Promise.reject(error);
 }
+export const getUsersCount = () =>
+    fetch("api/v1/users/count")
+    .then(checkStatus);
 
-export const getAllStudents = () =>
-    fetch("http://localhost:8080/api/v1/users")
+export const getAllUsers = () =>
+    fetch("api/v1/users")
     .then(checkStatus);
 
 export const getAllCities = () =>
-    fetch("http://localhost:8080/api/v1/city")
+    fetch("api/v1/city")
     .then(checkCity);
+
+export const addUserUser = user =>
+    fetch("api/v1/users", {
+      headers :{
+        'Content-Type': 'application/json'
+      },
+      method: 'POST',
+      body: JSON.stringify(user)
+    });
+
 

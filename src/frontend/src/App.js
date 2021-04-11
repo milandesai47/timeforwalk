@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react'
 import './App.css';
-import {getAllStudents, getAllCities} from "./client";
-import { Layout, Menu, Breadcrumb, Table, Spin, Empty} from 'antd';
+import {getAllUsers, getAllCities} from "./client";
+import { Layout, Menu, Breadcrumb, Table, Spin, Empty, Button} from 'antd';
 import {
   DesktopOutlined,
   PieChartOutlined,
@@ -9,7 +9,10 @@ import {
   TeamOutlined,
   UserOutlined,
   LoadingOutlined,
+  UserAddOutlined, UserDeleteOutlined
 } from '@ant-design/icons';
+import UserDrawerForm from "./UserDrawerForm";
+import UserRemoveDrawerForm from "./UserRemoveDrawerForm";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -64,13 +67,14 @@ const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 function App() {
   const [users, setUsers] = useState([]);
-  const [cities, setCities] = useState([])
+  const [cities, setCities] = useState([]);
   const [collapsed, setCollapsed] = useState(false);
   const [fetching, setFetching] = useState(true);
-
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [showDeleteDrawer, setShowDeleteDrawer] = useState(false);
 
   const fetchUsers = () =>
-      getAllStudents()
+      getAllUsers()
       .then(res => res.json())
       .then(data => {
         console.log(data)
@@ -100,14 +104,32 @@ function App() {
     if(users.length <= 0) {
       return <Empty />
     }
-    return <Table
+    return <>
+      <UserDrawerForm
+          showDrawer={showDrawer}
+          setShowDrawer={setShowDrawer}
+      />
+      <UserRemoveDrawerForm
+          showDeleteDrawer={showDeleteDrawer}
+          setShowDeleteDrawer={setShowDeleteDrawer}
+      />
+    <Table
         dataSource={users}
         columns={columns}
         bordered
-        title={() => 'Users'}
+        title={() =>
+          <Button
+              onClick={() => setShowDrawer(!showDrawer)}
+              type="primary" shape="round" icon={<UserAddOutlined />} size="large">
+            Count me in!
+          </Button>
+
+        }
         pagination={{ pageSize: 50 }}
         scroll={{ y: 240 }}
         rowKey={(user) => user.id} />;
+
+      </>
   }
 
   const renderCities  = () => {
@@ -156,9 +178,22 @@ function App() {
       <Header className="site-layout-background" style={{ padding: 0 }} />
       <Content style={{ margin: '0 16px' }}>
         <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>User</Breadcrumb.Item>
-          <Breadcrumb.Item>Bill</Breadcrumb.Item>
+          <Breadcrumb.Item>Users using TimeforWalk : {users.length}</Breadcrumb.Item>
         </Breadcrumb>
+        <div className="site-layout-background" style={{ padding: 24, minHeight: 50 }}>
+          <Button
+              onClick={() => setShowDrawer(!showDrawer)}
+              type="primary" shape="round" icon={<UserAddOutlined />} size="large">
+            Count me in!
+          </Button>
+        </div>
+        <div className="site-layout-background" style={{ padding: 24, minHeight: 50 }}>
+          <Button danger
+                  onClick={() => setShowDeleteDrawer(!showDeleteDrawer)}
+                  type="primary" shape="round" icon={<UserDeleteOutlined />} size="large">
+            Delete my data
+          </Button>
+        </div>
         <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
           {renderUsers()}
         </div>

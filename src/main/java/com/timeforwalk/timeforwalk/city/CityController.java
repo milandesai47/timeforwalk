@@ -21,9 +21,8 @@ public class CityController {
     return cities;
   }
 
-  @GetMapping("/find/{name}")
-  public ResponseEntity<City> getCityByName(@PathVariable("name") String name){
-    //TODO
-    return null;
+  @GetMapping("/find/bristol")
+  public City getCityByName(){
+    return new City(1L,"Bristol",  "-2.587910", "51.454514");
   }
 }
