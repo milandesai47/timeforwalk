@@ -1,11 +1,25 @@
 import {Drawer, Input, Col, Form, Row, Button} from 'antd';
-
+import {deleteUser} from "./client";
+import {errorNotification, successNotification} from "./Notification";
 
 function UserRemoveDrawerForm({showDeleteDrawer, setShowDeleteDrawer}) {
   const onCLose = () => setShowDeleteDrawer(false);
 
-  const onFinish = values => {
-    alert(JSON.stringify(values, null, 2));
+  const onFinish = email => {
+    console.log(email.Email);
+    deleteUser(email.Email)
+    .then(() => {
+      onCLose();
+      successNotification("Data removal request received", "Please verify by clicking link in the email")
+    }).catch(err => {
+      console.log(err);
+      onCLose();
+      err.response.json().then(res =>{
+        console.log(res);
+        errorNotification("There was an issue",
+            `${res.message}`)
+      })
+    });
   };
 
   const onFinishFailed = errorInfo => {
@@ -37,12 +51,11 @@ function UserRemoveDrawerForm({showDeleteDrawer, setShowDeleteDrawer}) {
       <Row gutter={16}>
         <Col span={12}>
           <Form.Item
-              name="email"
+              name="Email"
               label="Email"
               rules={[{required: true, message: 'Please enter email'}]}
           >
             <Input placeholder="Please enter email"/>
-            <Input placeholder="Please re-enter email"/>
             {/*//TODO : very email are same*/}
           </Form.Item>
         </Col>

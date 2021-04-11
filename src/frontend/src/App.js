@@ -1,7 +1,20 @@
 import {useState, useEffect} from 'react'
 import './App.css';
 import {getAllUsers, getAllCities} from "./client";
-import { Layout, Menu, Breadcrumb, Table, Spin, Empty, Button} from 'antd';
+import {
+  Layout,
+  Menu,
+  Breadcrumb,
+  Table,
+  Spin,
+  Empty,
+  Button,
+  Col,
+  Statistic,
+  Row,
+  Card,
+  Typography
+} from 'antd';
 import {
   DesktopOutlined,
   PieChartOutlined,
@@ -9,13 +22,15 @@ import {
   TeamOutlined,
   UserOutlined,
   LoadingOutlined,
-  UserAddOutlined, UserDeleteOutlined
+  UserAddOutlined, UserDeleteOutlined, LikeOutlined, ArrowUpOutlined
 } from '@ant-design/icons';
 import UserDrawerForm from "./UserDrawerForm";
 import UserRemoveDrawerForm from "./UserRemoveDrawerForm";
+import {errorNotification} from "./Notification";
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
+const { Title } = Typography;
 const columns = [
   {
     title: 'Id',
@@ -77,9 +92,17 @@ function App() {
       getAllUsers()
       .then(res => res.json())
       .then(data => {
-        console.log(data)
         setUsers(data);
         setFetching(false);
+      }).catch(err => {
+        console.log(err);
+        err.response.json().then(res => {
+          console.log(res);
+          errorNotification(
+              "There was an issue",
+              `${res.message}`
+          )
+        });
       });
 
   const fetchCities = () =>
@@ -108,6 +131,7 @@ function App() {
       <UserDrawerForm
           showDrawer={showDrawer}
           setShowDrawer={setShowDrawer}
+          fetchUsers={fetchUsers}
       />
       <UserRemoveDrawerForm
           showDeleteDrawer={showDeleteDrawer}
@@ -175,24 +199,45 @@ function App() {
       </Menu>
     </Sider>
     <Layout className="site-layout">
-      <Header className="site-layout-background" style={{ padding: 0 }} />
+      <Header className="site-layout-background" style={{ padding: 0 }} > <Title level={2}>Timeforwalk</Title></Header>
       <Content style={{ margin: '0 16px' }}>
-        <Breadcrumb style={{ margin: '16px 0' }}>
-          <Breadcrumb.Item>Users using TimeforWalk : {users.length}</Breadcrumb.Item>
+        <Breadcrumb style={{ margin: '20px 0' }}>
+          <Breadcrumb.Item>
+
+          </Breadcrumb.Item>
         </Breadcrumb>
         <div className="site-layout-background" style={{ padding: 24, minHeight: 50 }}>
-          <Button
-              onClick={() => setShowDrawer(!showDrawer)}
-              type="primary" shape="round" icon={<UserAddOutlined />} size="large">
-            Count me in!
-          </Button>
+
         </div>
         <div className="site-layout-background" style={{ padding: 24, minHeight: 50 }}>
-          <Button danger
-                  onClick={() => setShowDeleteDrawer(!showDeleteDrawer)}
-                  type="primary" shape="round" icon={<UserDeleteOutlined />} size="large">
-            Delete my data
-          </Button>
+          <Row gutter={16}>
+            <Col>
+            <Card>
+              <Statistic
+                  title="Active Users"
+                  value={users.length}
+                  precision={0}
+                  valueStyle={{ color: '#3f8600' }}
+                  prefix={<ArrowUpOutlined />}
+                  suffix=""
+              />
+            </Card>
+            </Col>
+            <Col>
+              <Button
+                  onClick={() => setShowDrawer(!showDrawer)}
+                  type="primary" shape="round" icon={<UserAddOutlined />} size="large">
+                Count me in!
+              </Button>
+            </Col>
+            <Col>
+              <Button danger
+                      onClick={() => setShowDeleteDrawer(!showDeleteDrawer)}
+                      type="primary" shape="round" icon={<UserDeleteOutlined />} size="large">
+                Delete my data
+              </Button>
+            </Col>
+          </Row>
         </div>
         <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
           {renderUsers()}
@@ -204,12 +249,6 @@ function App() {
       <Footer style={{ textAlign: 'center' }}>Ant Design ©2018 Created by Ant UED</Footer>
     </Layout>
   </Layout>
-
-
-
-  // return users.map((user, index) => {
-  //   return <p key={index}>{user.id} {user.name} {user.email}</p>;
-  // });
 }
 
 export default App;

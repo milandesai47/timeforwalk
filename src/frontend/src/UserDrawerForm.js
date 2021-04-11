@@ -2,22 +2,32 @@ import {Drawer, Input, Col, Form, Row, Button, Slider, Spin} from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import {addUserUser} from "./client";
 import {useState} from "react";
+import {successNotification, errorNotification} from "./Notification";
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
-function UserDrawerForm({showDrawer, setShowDrawer}) {
+function UserDrawerForm({showDrawer, setShowDrawer,fetchUsers}) {
   const onCLose = () => setShowDrawer(false);
   const [submitting, setSubmitting] = useState(false);
 
   const onFinish = user => {
     setSubmitting(true)
-    // alert(JSON.stringify(values, null, 2));
     console.log(JSON.stringify(user, null, 2))
     addUserUser(user)
-      .then(() => {alert("Registration successful")
+      .then(() => {
         onCLose();
+        successNotification("Registration Requested", "Please verify registration by clicking the link in email received")
+        fetchUsers();
       }).catch(err => {
-        console.log(err)
+      console.log(err);
+      onCLose();
+      err.response.json().then(res => {
+        console.log(res);
+        errorNotification(
+            "There was an issue",
+            `${res.message}`
+        )
+      });
     }).finally(() => {setSubmitting(false)})
   };
 
