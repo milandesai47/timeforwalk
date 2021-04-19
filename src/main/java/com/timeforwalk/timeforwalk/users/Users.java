@@ -35,6 +35,7 @@ public class Users {
   private String name;
   private String email;
   private int probability;
+  private boolean enabled = false;
 
   public Users(String name, String email, int probability) {
     this.name = name;

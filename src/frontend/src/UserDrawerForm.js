@@ -20,7 +20,6 @@ function UserDrawerForm({showDrawer, setShowDrawer,fetchUsers}) {
         fetchUsers();
       }).catch(err => {
       console.log(err);
-      onCLose();
       err.response.json().then(res => {
         console.log(res);
         errorNotification(
